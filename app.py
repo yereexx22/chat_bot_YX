@@ -34,7 +34,7 @@ local_responses = {
     " hola quien eres": "holiiis soy yunix tu amiga digital que te resolvera cualquier duda que tengas ❤️.",
     "adiós": "¡Hasta lueguito amiguit@!",
     "gracias": "¡De nada!",
-    "como estás": "Estoy aquí para ayudarte, ¿en qué te puedo servir pero nada de cosas raras eeh?"
+    "como estas": "Estoy aquí para ayudarte, ¿en qué te puedo servir pero nada de cosas raras eeh?"
 }
 
 # Página principal (solo muestra historial confirmado)
