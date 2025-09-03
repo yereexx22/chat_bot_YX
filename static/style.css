@@ -1,94 +1,561 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #121212;
-    color: #f0f0f0;
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    background-color: #0d0d0d;
+    font-family: 'Inter', sans-serif;
+    color: #eaeaea;
     display: flex;
     justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.chat-box {
+.chat-wrapper {
     width: 100%;
     max-width: 600px;
-    background-color: #1e1e1e;
-    padding: 20px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #1a1a1a;
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
-h2 {
+header {
+    padding: 20px;
+    background-color: #111;
     text-align: center;
-    margin-bottom: 20px;
-    color: #90caf9;
+    border-bottom: 1px solid #333;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 20px;
+    color: #fff;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    scroll-behavior: smooth;
 }
 
 .message {
-    margin-bottom: 12px;
-    padding: 10px 14px;
-    border-radius: 16px;
-    max-width: 100%;
-    word-wrap: break-word;
-}
-
-.user {
-    color: #ffffff;
-    background-color: #1976d2;
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 10px;
-}
-
-.bot {
-    color: #f0f0f0;
-    background-color: #333333;
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 10px;
-}
-
-form {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    animation: fadeIn 0.3s ease-in;
 }
 
-input[type="text"] {
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: none;
-    background-color: #2a2a2a;
-    color: #f0f0f0;
+.message.user {
+    justify-content: flex-end;
 }
 
-button {
+.message.model {
+    justify-content: flex-start;
+}
+
+.bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    background-color: #333;
+    color: #eaeaea;
+    position: relative;
+}
+
+.message.user .bubble {
+    background-color: #1da1f2;
+    color: #fff;
+}
+
+.role {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.chat-input {
+    display: flex;
+    padding: 15px;
+    background-color: #111;
+    border-top: 1px solid #333;
+}
+
+.chat-input input {
+    flex: 1;
     padding: 12px;
-    font-size: 16px;
-    background-color: #1976d2;
-    color: white;
     border: none;
     border-radius: 8px;
+    background-color: #222;
+    color: #fff;
+    font-size: 16px;
+}
+
+.chat-input input:focus {
+    outline: none;
+    background-color: #333;
+}
+
+.chat-input button {
+    margin-left: 10px;
+    padding: 0 20px;
+    background-color: #1da1f2;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 18px;
     cursor: pointer;
+    transition: background 0.3s;
 }
 
-button:hover {
-    background-color: #1565c0;
+.chat-input button:hover {
+    background-color: #0d8ddb;
 }
 
 .error {
-    color: #ff6b6b;
+    background-color: #ff4d4d;
+    color: #fff;
+    padding: 10px;
     text-align: center;
-    margin-top: 10px;
+    font-weight: bold;
 }
 
-@media (max-width: 600px) {
-    .chat-box {
-        border-radius: 0;
-        padding: 15px;
+/* Animación de carga estilo "X" */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.x-loader {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    animation: spin 1s linear infinite;
+}
+
+.x-loader::before,
+.x-loader::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #1da1f2;
+    top: 50%;
+    left: 0;
+    transform-origin: center;
+}
+
+.x-loader::before {
+    transform: rotate(45deg);
+}
+
+.x-loader::after {
+    transform: rotate(-45deg);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Indicador de carga con X blanca animada */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.x-loader {
+    width: 32px;
+    height: 32px;
+    position: relative;
+    animation: spin 1.2s linear infinite;
+    filter: drop-shadow(0 0 4px white);
+}
+
+.x-loader::before,
+.x-loader::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    top: 50%;
+    left: 0;
+    transform-origin: center;
+    border-radius: 2px;
+}
+
+.x-loader::before {
+    transform: rotate(45deg);
+}
+
+.x-loader::after {
+    transform: rotate(-45deg);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.x-loader {
+    width: 32px;
+    height: 32px;
+    position: relative;
+    animation: spin 1.2s linear infinite, pulseGlow 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px white);
+}
+
+.x-loader::before,
+.x-loader::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    top: 50%;
+    left: 0;
+    transform-origin: center;
+    border-radius: 2px;
+}
+
+.x-loader::before {
+    transform: rotate(45deg);
+}
+
+.x-loader::after {
+    transform: rotate(-45deg);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+    0% {
+        opacity: 0.3;
+        filter: drop-shadow(0 0 2px white);
     }
-    input[type="text"], button {
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 10px white);
+    }
+    100% {
+        opacity: 0.3;
+        filter: drop-shadow(0 0 2px white);
+    }
+}
+.glow-title {
+    color: white;
+    animation: pulseGlowTitle 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px white);
+}
+
+@keyframes pulseGlowTitle {
+    0% {
+        opacity: 0.5;
+        filter: drop-shadow(0 0 2px white);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 12px white);
+    }
+    100% {
+        opacity: 0.5;
+        filter: drop-shadow(0 0 2px white);
+    }
+}
+/* === Estilo base === */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d0d0d;
+    font-family: 'Inter', sans-serif;
+    color: #eaeaea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chat-wrapper {
+    width: 100%;
+    max-width: 600px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+/* === Encabezado === */
+header {
+    padding: 20px;
+    background-color: #111;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+header h1,
+.glow-title {
+    margin: 0;
+    font-size: 20px;
+    color: white;
+    animation: pulseGlowTitle 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px white);
+}
+
+/* === Área de mensajes === */
+main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    scroll-behavior: smooth;
+}
+
+.message {
+    display: flex;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.model {
+    justify-content: flex-start;
+}
+
+.bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    background-color: #333;
+    color: #eaeaea;
+    position: relative;
+}
+
+.message.user .bubble {
+    background-color: #1da1f2;
+    color: #fff;
+}
+
+.role {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* === Input de chat === */
+.chat-input {
+    display: flex;
+    padding: 15px;
+    background-color: #111;
+    border-top: 1px solid #333;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #222;
+    color: #fff;
+    font-size: 16px;
+}
+
+.chat-input input:focus {
+    outline: none;
+    background-color: #333;
+}
+
+.chat-input button {
+    margin-left: 10px;
+    padding: 0 20px;
+    background-color: #1da1f2;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.chat-input button:hover {
+    background-color: #0d8ddb;
+}
+
+/* === Mensaje de error === */
+.error {
+    background-color: #ff4d4d;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* === Indicador de carga con X blanca animada === */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.x-loader {
+    width: 32px;
+    height: 32px;
+    position: relative;
+    animation: spin 1.2s linear infinite, pulseGlow 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 4px white);
+}
+
+.x-loader::before,
+.x-loader::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    top: 50%;
+    left: 0;
+    transform-origin: center;
+    border-radius: 2px;
+}
+
+.x-loader::before {
+    transform: rotate(45deg);
+}
+
+.x-loader::after {
+    transform: rotate(-45deg);
+}
+
+/* === Animaciones === */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+    0% {
+        opacity: 0.3;
+        filter: drop-shadow(0 0 2px white);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 10px white);
+    }
+    100% {
+        opacity: 0.3;
+        filter: drop-shadow(0 0 2px white);
+    }
+}
+
+@keyframes pulseGlowTitle {
+    0% {
+        opacity: 0.5;
+        filter: drop-shadow(0 0 2px white);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 12px white);
+    }
+    100% {
+        opacity: 0.5;
+        filter: drop-shadow(0 0 2px white);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Correcciones para móviles === */
+body {
+    height: 100dvh; /* mejor comportamiento en móviles */
+}
+
+.chat-wrapper {
+    height: 100dvh;
+    border-radius: 0;
+}
+
+/* Input sticky para evitar que el teclado lo tape */
+.chat-input {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+}
+
+/* Media query para pantallas pequeñas */
+@media screen and (max-width: 480px) {
+    header h1,
+    .glow-title {
+        font-size: 18px;
+    }
+
+    main {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .bubble {
         font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .chat-input {
+        padding: 10px;
+    }
+
+    .chat-input input {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .chat-input button {
+        font-size: 16px;
+        padding: 0 16px;
+    }
+
+    .x-loader {
+        width: 24px;
+        height: 24px;
     }
 }

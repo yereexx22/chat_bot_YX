@@ -1,122 +1,181 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>ChatBot Yereexx</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .avatar-container {
+      width: 100%;
+      height: 400px;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      padding: 10px;
+      position: relative;
+    }
 
-        .chat-box {
-            width: 100%;
-            max-width: 600px;
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
+    .avatar-container::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: #000;
+      z-index: -1;
+    }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #90caf9;
-        }
+    .avatar-container video {
+      position: absolute;
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
 
-        .message {
-            margin-bottom: 12px;
-            padding: 10px 14px;
-            border-radius: 16px;
-            max-width: 100%;
-            word-wrap: break-word;
-        }
+    #waiting-video {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-        .user {
-            color: #ffffff;
-            background-color: #1976d2;
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 10px;
-        }
-
-        .bot {
-            color: #f0f0f0;
-            background-color: #333333;
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 10px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        input[type="text"] {
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-            background-color: #2a2a2a;
-            color: #f0f0f0;
-        }
-
-        button {
-            padding: 12px;
-            font-size: 16px;
-            background-color: #1976d2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #1565c0;
-        }
-
-        .error {
-            color: #ff6b6b;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 600px) {
-            .chat-box {
-                border-radius: 0;
-                padding: 15px;
-            }
-            input[type="text"], button {
-                font-size: 14px;
-            }
-        }
-    </style>
+    @media screen and (max-width: 480px) {
+      .avatar-container {
+        height: 300px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="chat-box">
-        <h2>💬 ChatBot Yereexx</h2>
-        {% for msg in chat_history %}
-            <div class="message">
-                <span class="{{ 'user' if msg.role == 'user' else 'bot' }}">{{ msg.role.capitalize() }}:</span>
-                {{ msg.parts[0].text }}
-            </div>
-        {% endfor %}
-        <form method="post">
-            <input type="text" name="user_input" placeholder="Escribe tu mensaje..." required>
-            <button type="submit">Enviar</button>
-        </form>
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
+
+  <div class="avatar-container">
+    <video id="waiting-video" autoplay loop muted playsinline preload="auto">
+      <source src="{{ url_for('static', filename='video/chica_esperando.mp4') }}" type="video/mp4">
+    </video>
+    <video id="speaking-video" autoplay muted playsinline preload="auto">
+      <source src="{{ url_for('static', filename='video/chica_hablando.mp4') }}" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="chat-wrapper">
+    <header><h1 class="glow-title">♠️YUNIX</h1></header>
+
+    <main id="chat-box">
+      {% for message in chat_history %}
+        <div class="message {{ message.role }}">
+          <div class="bubble">
+            <span class="role">
+              {% if message.role == "model" %} Yunix
+              {% elif message.role == "user" %} Tú
+              {% else %} {{ message.role.capitalize() }}
+              {% endif %}
+            </span>
+            <p>{{ message.text }}</p>
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if last_response %}
+        <div id="animated-response" class="message model">
+          <div class="bubble">
+            <span class="role">Yunix</span>
+            <p id="typed-text"></p>
+          </div>
+        </div>
+        <div id="typed-response-data" style="display:none;">{{ last_response }}</div>
+      {% endif %}
+    </main>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div id="loading-indicator" class="loading hidden">
+      <div class="x-loader"></div>
     </div>
+
+    <form method="POST" action="/send" class="chat-input">
+      <input type="text" name="user_input" placeholder="Escribe tu mensaje..." autocomplete="off" required>
+      <button type="submit">➤</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.querySelector("form");
+    const loading = document.getElementById("loading-indicator");
+
+    form.addEventListener("submit", () => {
+      loading.classList.remove("hidden");
+    });
+
+    window.onload = () => {
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+      loading.classList.add("hidden");
+
+      const responseTextElement = document.getElementById("typed-response-data");
+      if (responseTextElement) {
+        const responseText = responseTextElement.textContent.trim();
+        if (responseText.length > 0) {
+          typeTextAndPlayVideo(responseText);
+        }
+      }
+    };
+
+    function typeTextAndPlayVideo(text) {
+      const container = document.getElementById("animated-response");
+      const typedText = document.getElementById("typed-text");
+      const waitingVideo = document.getElementById("waiting-video");
+      const speakingVideo = document.getElementById("speaking-video");
+
+      typedText.innerHTML = "";
+      container.style.display = "flex";
+
+      waitingVideo.style.opacity = "0";
+      waitingVideo.style.pointerEvents = "none";
+
+      speakingVideo.style.opacity = "1";
+      speakingVideo.style.pointerEvents = "auto";
+      speakingVideo.currentTime = 0;
+      speakingVideo.play();
+
+      let i = 0;
+      const speed = 40;
+      const totalTime = text.length * speed;
+
+      function type() {
+        if (i < text.length) {
+          typedText.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      type();
+
+      setTimeout(() => {
+        speakingVideo.pause();
+        speakingVideo.currentTime = 0;
+        speakingVideo.style.opacity = "0";
+        speakingVideo.style.pointerEvents = "none";
+
+        setTimeout(() => {
+          waitingVideo.style.opacity = "1";
+          waitingVideo.style.pointerEvents = "auto";
+        }, 100); // margen para evitar parpadeo
+
+        fetch("/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "response_text=" + encodeURIComponent(text)
+        }).then(() => {
+          window.location.replace("/");
+        });
+      }, totalTime + 500);
+    }
+  </script>
 </body>
 </html>
