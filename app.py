@@ -31,7 +31,7 @@ temp_response = ""
 # Respuestas locales
 local_responses = {
     "hola": "¡Hola! ¿Cómo estás?",
-    " hola quien eres": "holiiis soy yunix tu amiga digital que te resolvera cualquier duda que tengas ❤️.",
+    "hola quien eres": "holiiis soy yunix tu amiga digital que te resolvera cualquier duda que tengas ❤️.",
     "adiós": "¡Hasta lueguito amiguit@!",
     "gracias": "¡De nada!",
     "como estas": "Estoy aquí para ayudarte, ¿en qué te puedo servir pero nada de cosas raras eeh?"
