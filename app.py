@@ -35,6 +35,7 @@ local_responses = {
     "adiós": "¡Hasta lueguito amiguit@!",
     "gracias": "¡De nada!",
     "como estas": "Estoy aquí para ayudarte, ¿en qué te puedo servir pero nada de cosas raras eeh?"
+    "wilmer es feo": "si wilmer es el niño mas horrendo y feo que hay con dientes de calabaza."
 }
 
 # Página principal (solo muestra historial confirmado)
